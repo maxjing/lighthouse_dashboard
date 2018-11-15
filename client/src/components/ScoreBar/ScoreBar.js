@@ -39,7 +39,7 @@ const ScoreBar = props => {
       <Grid container spacing={24}>
         <Grid item xs={12}>
           <Typography variant="title" gutterBottom>
-            LDP Page
+            Home Page
           </Typography>
         </Grid>
         <Grid item xs={6}>

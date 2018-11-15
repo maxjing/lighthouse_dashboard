@@ -36,7 +36,7 @@ class FailList extends React.Component {
     return (
       <div className={classes.root} subheader={<li />}>
         {fails.map((fail, index) => (
-          <ExpansionPanel>
+          <ExpansionPanel key={`section-${fail.id}-${index}`}>
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
               <Typography className={classes.heading}>{fail.title}</Typography>
             </ExpansionPanelSummary>

@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import _ from "lodash";
-import FailList from "./FailList/FailList";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import ScoreBar from "./ScoreBar/ScoreBar";
 import RunButton from "./RunButton/RunButton";
+import List from "./List/List";
 
 const styles = theme => ({
   container: {
@@ -21,7 +21,7 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { fails: [], score: null };
+    this.state = { hpScore: null, hpFails: [], hpPasses: [] };
   }
 
   componentDidMount() {
@@ -30,16 +30,25 @@ class App extends Component {
 
   _getData = () => {
     const data = require("../lighthouse_reports/report.json");
-    let fails = [];
-    let score;
+    let hpFails = [];
+    let hpPasses = [];
+    let hpAudits = [];
+    let hpScore;
     _.map(data.lhr.audits, obj => {
-      obj.details && obj.details.items.length > 0 && fails.push(obj);
+      obj.details && obj.details.items && hpAudits.push(obj);
     });
-    score = data.lhr.categories.accessibility.score * 100;
-    this.setState({ fails: fails, score: score });
+    _.map(hpAudits, audit => {
+      audit.details.items.length === 0
+        ? hpPasses.push(audit)
+        : hpFails.push(audit);
+    });
+
+    hpScore = data.lhr.categories.accessibility.score * 100;
+    this.setState({ hpFails: hpFails, hpScore: hpScore, hpPasses: hpPasses });
   };
 
   render() {
+    console.log(this.state);
     return (
       <div className="App">
         <header className="App-header">
@@ -50,20 +59,11 @@ class App extends Component {
               </Grid>
               <Grid item xs={4}>
                 <div style={{ border: "1px solid black" }}>
-                  <ScoreBar score={this.state.score} />
-                  <FailList fails={this.state.fails} />
-                </div>
-              </Grid>
-              <Grid item xs={4}>
-                <div style={{ border: "1px solid black" }}>
-                  <ScoreBar score={this.state.score} />
-                  <FailList fails={this.state.fails} />
-                </div>
-              </Grid>
-              <Grid item xs={4}>
-                <div style={{ border: "1px solid black" }}>
-                  <ScoreBar score={this.state.score} />
-                  <FailList fails={this.state.fails} />
+                  <ScoreBar score={this.state.hpScore} />
+                  <List
+                    fails={this.state.hpFails}
+                    passes={this.state.hpPasses}
+                  />
                 </div>
               </Grid>
             </Grid>
